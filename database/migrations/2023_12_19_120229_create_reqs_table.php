@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId("phar_id")->constrained("phars");
             $table->unsignedFloat("price");
-            $table->text("payment_state")->default("didn't pay yet");
+            $table->text("payment_state")->default("did not pay yet");
             $table->text("receive_state")->default("proccessing");
             $table->timestamps();
         });
