@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Phar extends Authenticatable implements JWTSubject
 {
     use HasFactory;
-
+    protected $hidden=['created_at','updated_at'];
     protected $fillable=["username","phone_number","password"];
     public function requests(){
         return $this->hasMany(Req::class,"phar_id");

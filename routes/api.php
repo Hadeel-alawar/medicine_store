@@ -22,4 +22,5 @@ use Illuminate\Support\Facades\Route;
 Route::group(["prefix"=>"pharmacist"],function(){
     Route::post("create",[PharController::class,"reg"]);
     Route::post("login",[PharController::class,"login"]);
+    Route::post("logout",[PharController::class,"logout"]);
 });

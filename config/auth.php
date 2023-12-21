@@ -44,6 +44,10 @@ return [
             'driver' => 'jwt' ,
             'provider' => 'users'
         ],
+        'phar-api' => [
+            'driver' => 'jwt' ,
+            'provider' => 'pharmacists'
+        ]
     ],
 
     /*
