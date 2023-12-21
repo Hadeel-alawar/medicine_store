@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\Medication;
 use Illuminate\Http\Request;
 use App\Models\Phar;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -36,7 +37,7 @@ class PharController extends Controller
         return response()->json([
             "ststus"=>true,
             "messsage"=> "your account created successfully",
-            "sucNum" =>65
+            "statusNum" =>65
         ]);
     }
 
@@ -52,7 +53,7 @@ class PharController extends Controller
             return response()->json([
                 "status" => false,
                 "message" => "your data is invalid , try again",
-                "errNum" => 55
+                "statusNum" => 8
             ]);
         }
         // $phar=$req->only("username","phone_number","password");
@@ -63,14 +64,14 @@ class PharController extends Controller
             return response()->json([
                 "status" => true,
                 "message" => "you are logged in successfully",
-                "sucNum" => 99,
+                "statusNum" => 10,
                 "pharmacist" => $pharmacist
             ]);
         } else {
             return response()->json([
                 "status" => false,
                 "message" => "your data is invalid , try again",
-                "errNum" => 8
+                "statusNum" => 8
             ]);
         }
     }
@@ -88,14 +89,32 @@ class PharController extends Controller
             return response()->json([
                 "status" => true,
                 "message" => "you are logged out",
-                "sucNum" => 9
+                "statusNum" => 10
             ]);
         }
         return response()->json([
             "status" => false,
             "message" => "something went wrong",
-            "errNum" => 810
+            "statusNum" => 8
         ]);
     }
+
+    public function browse(){
+        $med = Medication::get()->groupby("cat");
+        return $med;
+    }
+
+    public function search(Request $request){
+        $med=Medication::where("cat",$request->input)
+        ->orwhere("scientific_name",$request->input)
+        ->get();
+        return $med;
+    }
+
+    public function viewSpecifics(Request $request){
+        $med=Medication::where("id",$request->id)->get();
+        return $med;
+    }
+
 }
 

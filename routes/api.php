@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PharController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,4 +24,8 @@ Route::group(["prefix"=>"pharmacist"],function(){
     Route::post("create",[PharController::class,"reg"]);
     Route::post("login",[PharController::class,"login"]);
     Route::post("logout",[PharController::class,"logout"]);
+    Route::get("surf",[PharController::class,"browse"]);
+    Route::post("search",[PharController::class,"search"]);
+    Route::post("show",[PharController::class,"viewSpecifics"]);
 });
+Route::get("add",[AdminController::class,"addMedication"]);
