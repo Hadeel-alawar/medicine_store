@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Req extends Model
 {
     use HasFactory;
+
+    protected $fillable=["phar_id"];
     public function medications(){
         return $this->belongsToMany(Medication::class,"med_req_pivot");
     }

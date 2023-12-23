@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('med_req_pivot', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("medication_id")->constrained("medications");
             $table->foreignId("req_id")->constrained("reqs");
+            $table->foreignId("medication_id")->constrained("medications");
+            $table->string("name");
             $table->integer("quantity");
+            $table->text("payment_state")->default("did not pay yet");
+            $table->text("receive_state")->default("proccessing");
+            $table->unsignedFloat("price")->default(600);
             $table->timestamps();
         });
     }

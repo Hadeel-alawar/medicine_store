@@ -26,7 +26,7 @@ class PharController extends Controller
                 "status" => false,
                 "message" => "your data is invalid , try again",
                 "errNum" => 44
-             ]);
+            ]);
         }
         $phar = ([
             "username" => $req->username,
@@ -35,9 +35,9 @@ class PharController extends Controller
         ]);
         Phar::create($phar);
         return response()->json([
-            "ststus"=>true,
-            "messsage"=> "your account created successfully",
-            "statusNum" =>65
+            "ststus" => true,
+            "messsage" => "your account created successfully",
+            "statusNum" => 65
         ]);
     }
 
@@ -84,7 +84,11 @@ class PharController extends Controller
                 JWTAuth::setToken($token)->invalidate();
 
             } catch (JWTException $e) {
-                return $this->error(7, $e->getMessage());
+                return response()->json([
+                    "status" => false,
+                    "message" => $e->getMessage(),
+                    "statusNum" => 8
+                ]);
             }
             return response()->json([
                 "status" => true,
@@ -97,23 +101,6 @@ class PharController extends Controller
             "message" => "something went wrong",
             "statusNum" => 8
         ]);
-    }
-
-    public function browse(){
-        $med = Medication::get()->groupby("cat");
-        return $med;
-    }
-
-    public function search(Request $request){
-        $med=Medication::where("cat",$request->input)
-        ->orwhere("scientific_name",$request->input)
-        ->get();
-        return $med;
-    }
-
-    public function viewSpecifics(Request $request){
-        $med=Medication::where("id",$request->id)->get();
-        return $med;
     }
 
 }
