@@ -9,12 +9,14 @@ class Req extends Model
 {
     use HasFactory;
 
-    protected $fillable=["phar_id"];
-    public function medications(){
-        return $this->belongsToMany(Medication::class,"med_req_pivot");
+    protected $fillable = ["phar_id"];
+    public function medications()
+    {
+        return $this->belongsToMany(Medication::class, "med_req_pivot");
     }
 
-    public function pharmacist(){
-        return $this->belongsTo(Phar::class,"phar_id");
+    public function pharmacist()
+    {
+        return $this->belongsTo(Phar::class, "phar_id");
     }
 }

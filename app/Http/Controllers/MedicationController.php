@@ -40,29 +40,71 @@ class MedicationController extends Controller
         }
     }
 
-
     public function browse()
     {
-        $med = Medication::get()->groupby("cat");
-        return response()->json([
-            "status" => true,
-            "message" => "this is your medicines",
-            "statusNum" => 10,
-            "medications" => $med
-        ]);
+        $medicinesByCategory = Medication::select('cat')->distinct()
+            ->orderBy('cat')
+            ->get();
+
+        $medicinesGroupedByCategory = [];
+
+        foreach ($medicinesByCategory as $category) {
+            $medicinesGroupedByCategory[$category->cat] = Medication::where('cat', $category->cat)->get();
+        }
+
+        return response()->json(['medicinesByCategory' => $medicinesGroupedByCategory], 200);
     }
+
+
+
+
+    // public function browse()
+    // {
+    //     $med = Medication::get()->groupby("cat");
+    //     return response()->json([
+    //         "status" => true,
+    //         "message" => "this is your medicines",
+    //         "statusNum" => 10,
+    //         "medications" => $med
+    //     ]);
+    // }
+
+    // public function search(Request $request)
+    // {
+    //     $med = Medication::where("cat", $request->input)
+    //         ->orwhere("scientific_name", $request->input)
+    //         ->get();
+    //     if (!empty($med)) {
+    //         return response()->json([
+    //             "status" => true,
+    //             "message" => "the result",
+    //             "statusNum" => 10,
+    //             "medications" => $med
+    //         ]);
+    //     } else {
+    //         return response()->json([
+    //             "status" => false,
+    //             "message" => "not found",
+    //             "statusNum" => 8
+    //         ]);
+    //     }
+    // }
+
 
     public function search(Request $request)
     {
-        $med = Medication::where("cat", $request->input)
-            ->orwhere("scientific_name", $request->input)
+        $input = $request->input('input');
+
+        $medicines = Medication::where('cat', 'like', '%' . $input . '%')
+            ->orWhere('scientific_name', 'like', '%' . $input . '%')
             ->get();
-        if (!empty($med)) {
+
+        if (!$medicines->isEmpty()) {
             return response()->json([
                 "status" => true,
                 "message" => "the result",
                 "statusNum" => 10,
-                "medications" => $med
+                "medications" => $medicines
             ]);
         } else {
             return response()->json([
@@ -73,14 +115,15 @@ class MedicationController extends Controller
         }
     }
 
-    public function viewSpecifics(Request $request)
+
+    public function viewSpecifics($id)
     {
-        $med = Medication::find($request->id);
-        return response()->json([
-            "status" => true,
-            "message" => "this is the medicine",
-            "statusNum" => 10,
-            "medications" => $med
-        ]);
+        $med = Medication::find($id);
+            return response()->json([
+                "status" => true,
+                "message" => "this is the medicine",
+                "statusNum" => 10,
+                "medications" => $med
+            ]);
     }
 }

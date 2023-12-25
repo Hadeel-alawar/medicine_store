@@ -28,8 +28,8 @@ Route::group(["prefix" => "pharmacist"], function () {
     Route::post("logout", [PharController::class, "logout"]);
     Route::get("surf", [MedicationController::class, "browse"]);
     Route::post("search", [MedicationController::class, "search"]);
-    Route::post("show", [MedicationController::class, "viewSpecifics"]);
-    Route::post("addReq",[ReqController::class,"addOrder"]);
+    Route::get("show/{id}", [MedicationController::class, "viewSpecifics"]);
+    Route::post("addReq", [ReqController::class, "store"]);
 });
 
 Route::group(["prefix" => "admin"], function () {

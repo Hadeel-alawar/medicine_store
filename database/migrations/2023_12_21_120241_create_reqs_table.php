@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('reqs', function (Blueprint $table) {
             $table->id();
             $table->foreignId("phar_id")->constrained("phars");
+            $table->text("payment_state")->default("did not pay yet");
+            $table->text("receive_state")->default("proccessing");
             $table->timestamps();
         });
     }
