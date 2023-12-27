@@ -32,6 +32,7 @@ Route::group(["prefix" => "pharmacist"], function () {
     Route::get("show/{id}", [MedicationController::class, "viewSpecifics"]);
     Route::post("addReq", [ReqController::class, "addOrder"]);
     Route::post("fav", [FavouriteController::class, 'addFav']);
+    Route::get("report",[ReqController::class,"report"]);
 });
 
 Route::group(["prefix" => "admin"], function () {

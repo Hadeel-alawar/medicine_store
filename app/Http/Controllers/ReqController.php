@@ -68,6 +68,25 @@ class ReqController extends Controller
             }
         }
     }
+
+
+    public function report(Request $request){
+
+        $startDate = Carbon::parse($request->start_date)->startOfDay();
+        $endDate = Carbon::parse($request->end_date)->endOfDay();
+        $orders = Req::whereBetween('created_at', [$startDate, $endDate])->get();
+        // $med=$orders->medications;
+        $sales = Req::where("receive_state","sent")->whereBetween('created_at' , [$startDate, $endDate])->get();
+        return response()->json([
+            "status" => true,
+            "message" => "this is a report which view the orders and the sales in a specefic period",
+            "statusNum" => 10 ,
+            "orders in this period " => $orders,
+            "sales in this period " => $sales
+        ]);
+    }
+
+
 }
 
 
