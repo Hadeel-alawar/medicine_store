@@ -6,6 +6,7 @@ use App\Http\Controllers\PharController;
 use App\Http\Controllers\ReqController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FavouriteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,9 +30,11 @@ Route::group(["prefix" => "pharmacist"], function () {
     Route::get("surf", [MedicationController::class, "browse"]);
     Route::post("search", [MedicationController::class, "search"]);
     Route::get("show/{id}", [MedicationController::class, "viewSpecifics"]);
-    Route::post("addReq", [ReqController::class, "store"]);
+    Route::post("addReq", [ReqController::class, "addOrder"]);
+    Route::post("fav", [FavouriteController::class, 'addFav']);
 });
 
 Route::group(["prefix" => "admin"], function () {
     Route::post("add", [MedicationController::class, "addMedication"]);
+    Route::post("status", [ReqController::class, "updateStatus"]);
 });

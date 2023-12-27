@@ -5,56 +5,70 @@ namespace App\Http\Controllers;
 use App\Models\Medication;
 use Illuminate\Http\Request;
 use App\Models\Req;
+use Illuminate\Support\Carbon;
 
 class ReqController extends Controller
 {
-    public function addOrder(Request $req)
+    public function addOrder(Request $request)
     {
+        $amounts = array_filter($request->quan);
+        $ids = $request->medicine_Ids;
+        $price = 0;
+        for ($i = 0; $i < count($amounts); $i++) {
+            $currnetPrice = Medication::find($ids[$i])->price;
+            $price += $currnetPrice * $amounts[$i];
+        }
         Req::create([
-            "phar_id" => $req->phar_id,
-            "price" => $req->price
+            "phar_id" => $request->phar_id,
+            "price" => $price
         ]);
-        $or_id = Req::max("id");
-        $request = Req::where("id", $or_id)->first();
-        // return count($req->medicine_ids);
-        for ($i = 0; $i < count($req->medicine_ids); $i++) {
-            $request->medications()->attach([
-                $req->medicine_ids[$i] => [
-                    "name" => $req->name[$i],
-                    "quantity" => $req->quan[$i]
-                ]
+        $order_id = Req::latest()->value('id');
+        $order = Req::find($order_id);
+        foreach ($request->medicine_Ids as $key => $medicineId) {
+            $medicine = Medication::find($medicineId);
+            $order->medications()->attach($medicineId, [
+                'quantity' => $amounts[$key],
+                'price' => $medicine->price,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
-        return response()->json([
-            "status" => true,
-            "message" => "the request is sent",
-            "statusNum" => 8
-        ]);
     }
 
-public function store(Request $request)
-{
-    $pharmacistId = $request->input('phar_id');
+    public function updateStatus(Request $request)
+    {
+        $receive_status = $request->receive;
+        $payment_status = $request->payment;
+        for ($i = 0; $i < count($request->req_ids); $i++) {
+            if ($receive_status[$i] != null) {
+                Req::where("id", $request->req_ids[$i])->update([
 
-    // إنشاء الطلبية
-    $order = Req::create([
-        'phar_id' => $pharmacistId,
-    ]);
-    $order_id=Req::select("id")->where("phar_id",$order->phar_id);
+                    "receive_state" => $receive_status[$i]
+                ]);
+                if ($receive_status[$i] == "sent") {
+                    $order_id = $request->req_ids[$i];
+                    $order = Req::find($order_id);
+                    $meds = $order->medications;
+                    foreach ($meds as $med) {
+                        $med_id = $med->id;
+                        $med_quan = $order->medications()->where("medication_id", $med_id)->first()->pivot->quantity;
+                        Medication::where("id", $med_id)->update([
+                            "quantity" => ($med->quantity - $med_quan)
+                        ]);
 
-    $medicines = $request->medicines; // قائمة الأدوية المُرسلة من الصيدلي
+                    }
 
-    foreach ($medicines as $medicine) {
-        // البحث عن الدواء بالمعرف المرسل
-        $selectedMedicine = Medication::findOrFail($medicine['id']);
+                }
 
-        // إنشاء العلاقة وتعيين الكمية والمعلومات الإضافية
-        $order->medications()->save($selectedMedicine,["name"=>$medicine["name"],"quan"=> $medicine["quan"]]);
+            }
+            if ($payment_status[$i] != null) {
+                Req::where("id", $request->req_ids[$i])->update([
+                    "payment_state" => $payment_status[$i]
+                ]);
+            }
+        }
     }
-
-    return response()->json(['order' => $order], 201);
 }
 
 
 
-}

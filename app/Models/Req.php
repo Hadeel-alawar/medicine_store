@@ -9,10 +9,10 @@ class Req extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["phar_id"];
+    protected $fillable = ["phar_id","price","payment_state","receive_state"];
     public function medications()
     {
-        return $this->belongsToMany(Medication::class, "med_req_pivot");
+        return $this->belongsToMany(Medication::class, "med_req_pivot")->withPivot("quantity");
     }
 
     public function pharmacist()

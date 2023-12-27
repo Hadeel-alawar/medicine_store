@@ -13,6 +13,10 @@ class Medication extends Model
     protected $hidden = ["created_at", "updated_at"];
     public function requests()
     {
-        return $this->belongsToMany(Req::class, "med_req_pivot");
+        return $this->belongsToMany(Req::class, "med_req_pivot")->withPivot("quantity");
+    }
+    public function favourits()
+    {
+        return $this->belongsToMany(Favourite::class, "med_fav_pivot", "medication_id", "fav_id");
     }
 }
