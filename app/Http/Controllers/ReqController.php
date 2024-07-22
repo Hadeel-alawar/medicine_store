@@ -72,8 +72,8 @@ class ReqController extends Controller
 
     public function report(Request $request){
 
-        $startDate = Carbon::parse($request->start_date)->startOfDay();
-        $endDate = Carbon::parse($request->end_date)->endOfDay();
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
         $orders = Req::whereBetween('created_at', [$startDate, $endDate])->get();
         // $med=$orders->medications;
         $sales = Req::where("receive_state","sent")->whereBetween('created_at' , [$startDate, $endDate])->get();
